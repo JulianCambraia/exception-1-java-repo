@@ -6,36 +6,35 @@ import java.util.Date;
 import java.util.Scanner;
 
 import model.entities.Reservas;
+import model.exceptions.DomainException;
 
 /**
  * Exemplo Didático
  * 
- * Lógica Ruim más ainda não tão Boa pois mesmo tendo delegado parte da
- * validação para a classe responsável ou seja Resevas ainda há regras
- * implementadas no programa principal.
+ * Lógica Boa más ainda não tão Boa pois mesmo tendo delegado parte da validação
+ * para a classe responsável ou seja Resevas ainda há regras implementadas no
+ * programa principal.
  * 
  * @author julian
  *
  */
 public class ExcecoesPersonalizadasMainProgram {
 
-	public static void main(String[] args) throws ParseException {
+	public static void main(String[] args) {
 
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		Scanner sc = new Scanner(System.in);
 
-		System.out.print("Número do Quarto:");
-		Integer pNumeroQuarto = sc.nextInt();
+		try {
+			System.out.print("Número do Quarto:");
+			Integer pNumeroQuarto = sc.nextInt();
 
-		System.out.print("data do Check-in: (dd/MM/yyyy) ");
-		Date pDataCheckIn = sdf.parse(sc.next());
+			System.out.print("data do Check-in: (dd/MM/yyyy) ");
+			Date pDataCheckIn = sdf.parse(sc.next());
 
-		System.out.print("data do Check-out: (dd/MM/yyyy) ");
-		Date pDataCheckOut = sdf.parse(sc.next());
+			System.out.print("data do Check-out: (dd/MM/yyyy) ");
+			Date pDataCheckOut = sdf.parse(sc.next());
 
-		if (!pDataCheckOut.after(pDataCheckIn)) {
-			System.out.println("Erro na reserva de quarto, Data de saída deve ser após a Data de entrada");
-		} else {
 			Reservas reservas = new Reservas(pNumeroQuarto, pDataCheckIn, pDataCheckOut);
 			System.out.println("Reserva: " + reservas);
 
@@ -47,13 +46,18 @@ public class ExcecoesPersonalizadasMainProgram {
 			System.out.print("data do Check-out: (dd/MM/yyyy) ");
 			pDataCheckOut = sdf.parse(sc.next());
 
-			String error = reservas.atualizarDatas(pDataCheckIn, pDataCheckOut);
-			if (error != null) {
-				System.out.println("Erro ao incluir reserva: " + error);
-			} else {
-				System.out.println("Reserva: " + reservas);
-			}
-		}
+			reservas.atualizarDatas(pDataCheckIn, pDataCheckOut);
+
+			System.out.println("Reserva: " + reservas);
+			
+		} catch (ParseException e) {
+			System.out.println("Formato de Data inválido!");
+			e.printStackTrace();
+		} catch (DomainException e) {
+			System.out.println("Error na Reserva: " + e.getMessage());
+		} catch (RuntimeException e) {
+			System.out.println("ERRO INESPERADO");
+		} 
 
 		sc.close();
 
